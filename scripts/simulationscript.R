@@ -2,25 +2,37 @@
 #cleanup required - change saving space, and function names to new structure
 #furthermore: text stuff from .Rmd vignettes needs to move to the README
 
-r <- unclass(lsf.str(envir = asNamespace("ajs.ordinal.clustering"), all = T))
-for(name in r) eval(parse(text=paste0(name, '<-ajs.ordinal.clustering:::', name)))
+list.files('../R') |> sapply(source) #gonna test whether that works in a different .Rproj
 
 library(flexclust)
-library(tidyverse)
+library(flexord)
+#do we not need flexmix??
+library(magrittr) #do we need anything else from there?
 library(parallel)
 library(data.table)
 
-#add data loading part here
+backpain <- data('lowbackpain', package='flexord')$data
 
 alpha2 <- c(0, 75, 150) |> 
   setNames(c('easy', 'medium', 'hard'))
+m <- c(3, 6, 11)
+N <- c(50, 200, 500)
+r <- 2:11 #do I need to do the -1 or not?
 
-algs <- c('regnormal', 'multinomial', 'kmedians',
-          'kmodes', 'PAM:Gower', 'PAM:GDM2') #leaving the kgs still out as WIP
+#removed algos argument
 
-#add makedir thing here
+sapply('../data', \(dir) { #again, test in new .Rproj
+  if(!dir.exists(dir)) {
+    dir.create(dir, recursive=T, showWarnings=F)
+  }
+})
 
 mclapply(alpha2,
-         \(a2) sim_backpain(a2, algos = algs),
+         \(a2) sim_backpain(inputdata = lowbackpain$data,
+                            nIter = 100,
+                            alpha2 = a2,
+                            n_vars = m,
+                            sample_size = N,
+                            size=r),
          mc.cores = 4)
 
