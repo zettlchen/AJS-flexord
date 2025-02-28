@@ -28,12 +28,12 @@
 #the condition was if(!is.na(n_debug)))
 sim_backpain_apply2grid = function(mod, stepfn,
                                    sizes, sample_size,
-                                   n_vars, Niter,
+                                   n_vars, Niter, n_debug,
                                    var_imp = sim_var_importance(),
                                    seed = 0xBA0BAB, multicore=TRUE) {
   
-  full_sample_size <- sample_size = c(50, 100, 200, 300, 400, 500)
-  full_n_vars <- n_vars = 2:11
+  full_sample_size <- c(50, 100, 200, 300, 400, 500)
+  full_n_vars <- 2:11
   #NOTE TO SELVES: leaving in the original params here (i.e. the 'original original' ones, before
   #we selected 3 Ns and 3 ms), cause in the code we filtered that afterward to
   #maintain the same seeds. And I guess for a 'true reproduction' that is necessary
@@ -41,14 +41,14 @@ sim_backpain_apply2grid = function(mod, stepfn,
   #data sets
   
   with_seed(seed, {
-    sim1 = \(size, N, n_vars, iter, seed, index) {
+    sim1 = \(size, N, m, iter, seed, index) {
       set.seed(seed)
       progr(index)
       sim_data = data_sim_from_model(mod, size, N)
       data = sim_data$data
       group = sim_data$group
       
-      which_vars = head(var_imp, n_vars)
+      which_vars = head(var_imp, m)
       data = data[, which_vars]
       checksum = digest::sha1(sim_data$data)
       
@@ -60,13 +60,13 @@ sim_backpain_apply2grid = function(mod, stepfn,
         } else {
           ari = randIndex(m1$clusters[[1]], group)
         }
-        data.table(size, N, n_vars=n_vars, iter, ari, checksum=checksum)
+        data.table(size, N, n_vars=m, iter, ari, checksum=checksum)
       } else {
         rr = \(debug=FALSE) {
           if(debug) debugonce(sim1)
           sim1(size, N, iter, seed, index)
         }
-        data.table(size, N, n_vars=n_vars, iter, error=m1, retry=rr, seed, checksum=checksum)
+        data.table(size, N, n_vars=m, iter, error=m1, retry=rr, seed, checksum=checksum)
       }
     }
     if(is.data.table(mod)) {
@@ -91,7 +91,7 @@ sim_backpain_apply2grid = function(mod, stepfn,
     
     applyfn = if(multicore) mclapply else lapply
     
-    progr = progress_eta(nrow(grid))
+    progr = .progress_eta(nrow(grid))
     
     res = applyfn(seq(nrow(grid)), \(i) {
       do.call(sim1, as.list(grid[i,]))
@@ -100,6 +100,21 @@ sim_backpain_apply2grid = function(mod, stepfn,
     
     res
   })
+}
+
+#helper for progress display on console
+.progress_eta = function(ntotal) {
+  start = Sys.time()
+  
+  function(i) {
+    rest = ntotal-i
+    
+    now = Sys.time()
+    eta = start + (now - start)/i * ntotal
+    
+    cat(sprintf("%d\t%d\t%s\n", i, ntotal,
+                strftime(eta, "%Y-%m-%d %H:%M:%S")))
+  }
 }
 
 #Conduct the 'stepping-step' for the different algorithm types
@@ -112,7 +127,7 @@ sim_backpain_apply2grid = function(mod, stepfn,
                        verbose=FALSE,
                        set_seed=multicore) {
   
-  progr = progress_eta(length(k)*nrep)
+  progr = .progress_eta(length(k)*nrep)
   
   step1 = \(ki, iter, seed) {
     if(verbose) { cat(sprintf("k=%d\t", ki)); progr(iter) }
@@ -207,4 +222,9 @@ sim_backpain_apply2grid = function(mod, stepfn,
   
   as.matrix(dissmat)[,mod$rownames.med] |> 
     apply(1, which.min)
+}
+
+#generate different seeds for different starting values
+.get_seeds = function(n) {
+  round(2^31 * runif(n, -1, 1))
 }

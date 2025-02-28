@@ -8,10 +8,9 @@
 #'        data sets. In the paper, it was run on `data('lowbackpain')`.
 #' @importFrom nnet multinom
 # 
-#NOTE TO SELVES: is flexord::FLXMCbinomial equivalent to ajs.ordinal.clustering::FLXMCbinomial2? 
 sim_var_importance = function(inputdata) {
   
-  mod1 = stepFLX2(data=inputdata, model=FLXMCbinomial(alpha2=0), k=3, #in ajs 'FLXMCbinomial2' was used. Is the function the same?
+  mod1 = stepFLX4sim(data=inputdata, model=FLXMCbinomial2(alpha2=0), k=3,
                   nrep=10,
                   verbose=FALSE, multicore=TRUE)
   

@@ -1,27 +1,39 @@
-#copied from ajs-ordinal-clustering/inst/scripts/sim4nonas_v2.R
-#cleanup required - change saving space, and function names to new structure
-#furthermore: text stuff from .Rmd vignettes needs to move to the README
+#Simulation script, last checked: 28.02.25
 
-list.files('../R') |> sapply(source) #gonna test whether that works in a different .Rproj
+#open points:
+
+#fix: back to print to file option (adding mkdir step to simulation script) [X]
+#general TODO: add scripts with old distGDM2 and distGower [X]
+#general TODO: add script for FLXMCbinomial2 [~]
+#general TODO: add script for FLXMCbetabinom2 [~]
+#are the other FLXs the same as in flexord? [ ]
 
 library(flexclust)
+library(flexmix)
+list.files('../R', full.names = TRUE) |> 
+  sapply(source)
 library(flexord)
-#do we not need flexmix??
-library(magrittr) #do we need anything else from there?
 library(parallel)
 library(data.table)
+library(here)
+library(nnet, include.only = 'multinom')
+library(magrittr, include.only = '%>%')
+library(clusterSim, include.only = 'GDM2')
+library(withr, include.only = 'with_seed')
 
-backpain <- data('lowbackpain', package='flexord')$data
+(num_cores <- detectCores(logical = TRUE)) 
+(num_cores_use <- max(1, floor(num_cores * 0.75)))
+
+data('lowbackpain', package='flexord')
 
 alpha2 <- c(0, 75, 150) |> 
   setNames(c('easy', 'medium', 'hard'))
 m <- c(3, 6, 11)
 N <- c(50, 200, 500)
-r <- 2:11 #do I need to do the -1 or not?
+r <- 2:11
+nIter <- 100
 
-#removed algos argument
-
-sapply('../data', \(dir) { #again, test in new .Rproj
+sapply('../data', \(dir) {
   if(!dir.exists(dir)) {
     dir.create(dir, recursive=T, showWarnings=F)
   }
@@ -29,10 +41,10 @@ sapply('../data', \(dir) { #again, test in new .Rproj
 
 mclapply(alpha2,
          \(a2) sim_backpain(inputdata = lowbackpain$data,
-                            nIter = 100,
+                            nIter = nIter,
                             alpha2 = a2,
                             n_vars = m,
                             sample_size = N,
-                            size=r),
-         mc.cores = 4)
+                            size=r-1),
+         mc.cores = num_cores_use)
 

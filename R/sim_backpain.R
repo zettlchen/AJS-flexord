@@ -1,9 +1,3 @@
-#copied from SimulationStudy.Rnw
-#fix: back to print to file option (adding mkdir step to simulation script)
-#general TODO: add scripts with old distGDM2 and distGower
-#general TODO: add script for FLXMCbinomial2 (it isn't actually the same, at least alpha2 is
-#row count, not proportion)
-
 #' 'The big simulation wrapper' where we apply the simulation and the clustering
 #' algorithms
 #' @param inputdata data set that will be used as the basis for simulating data
@@ -23,15 +17,15 @@
 #' @param size goal simulated data characteristic:
 #'        numeric vector of the response level lengths of the ordinal variables
 #'        in the simulated data sets (equal across all variables of one data set).
-#
-#NOTE TO SELVES: removed the `algos` argument
+#'        
 sim_backpain <- function(inputdata,
                          nIter, alpha2,
                          n_vars, sample_size,
                          size) {
-  with_seed(1234, {
+  withr::with_seed(1234, {
     
-    var_imp = sim_var_importance(inputdata=inputdata$data)
+    var_imp = sim_var_importance(inputdata=inputdata)
+    n_debug = NA
     
     # set default parameters
     simfn = \(...) {
@@ -39,88 +33,117 @@ sim_backpain <- function(inputdata,
                               sample_size=sample_size,
                               n_vars=n_vars,
                               var_imp=var_imp,
-                              Niter=nIter, ...)
+                              Niter=nIter,
+                              n_debug=NA, ...)
     }
     
     # running the base model for simulation (within seed,
     # so the resulting data sets will be the same)
-    mod1 = stepFLX4sim(data=inputdata$data,
-                       model=FLXMCbinomial(alpha2=alpha2), k=3, #is this the same as ajs.ordinal.clustering::FLXMCbinomial2?
+    mod1 = stepFLX4sim(data=inputdata,
+                       model=FLXMCbinomial2(alpha2=alpha2), k=3,
                        nrep=10,
                        verbose=FALSE, multicore=FALSE)
   })
   
-  res <- list()
-  
   # clustering steps (+application of simulation)
-  #binomial model
-  res[[1]] <- sim_res_binom = simfn(mod1, \(data, k, size) {
+  # binomial model
+  sim_res_binom = simfn(mod1, \(data, k, size) {
     stepFLX4sim(data=data, model=FLXMCbinomial(size=size), k=k,
                 nrep=10,
                 verbose=FALSE, multicore=FALSE)
   }) %>% .[, algo := "binomial"]
   
-  #regularized multivariate normal model
-  res[[2]] <- sim_res_regnorm = simfn(mod1, \(data, k, size) {
+  sprintf("../data/sim_backpain_sample_size_ncat_binomial_alpha%d.rds", alpha2) |> 
+    saveRDS(sim_res_binom, file=_)
+  
+  # multivariate normal model
+  sim_res_regnorm = simfn(mod1, \(data, k, size) {
     stepFLX4sim(data=data, model=FLXMCregnorm(G=k), k=k,
                 nrep=10,
                 verbose=FALSE, multicore=FALSE)
   }) %>% .[, algo := "regnorm"]
   
+  sprintf("../data/sim_backpain_sample_size_ncat_regnorm_alpha%d.rds", alpha2)  |> 
+    saveRDS(sim_res_regnorm, file=_)
+  
   # kmeans model
-  res[[3]] <- sim_res_kmeans = simfn(mod1, \(data, k, size) {
+  sim_res_kmeans = simfn(mod1, \(data, k, size) {
     stepKM4sim(data, k=k, nrep=10, multicore=FALSE)
   }) %>% .[, algo := "kmeans"]
   
+  sprintf("../data/sim_backpain_sample_size_ncat_kmeans_alpha%d.rds", alpha2) |> 
+    saveRDS(sim_res_kmeans, file=_)
+  
   # betabinomial model
-  res[[4]] <- sim_res_betabinom = simfn(mod1, \(data, k, size) {
+  sim_res_betabinom = simfn(mod1, \(data, k, size) {
     stepFLX4sim(data=data, model=FLXMCbetabinom2(size=size), k=k,
                 nrep=10,
                 verbose=FALSE, multicore=FALSE)
   }) %>% .[, algo := "betabinom"]
   
+  sprintf("../data/sim_backpain_sample_size_ncat_betabinom_alpha%d.rds", alpha2) |> 
+    saveRDS(sim_res_betabinom, file=_)
+  
   # multinomial model
-  res[[5]] <- sim_res_multinom = simfn(mod1, \(data, k, size) {
+  sim_res_multinom = simfn(mod1, \(data, k, size) {
     stepFLX4sim(data=data+1, model=FLXMCregmultinom(size=size+1, alpha2=1), k=k,
                 nrep=10,
                 verbose=FALSE, multicore=FALSE)
   }) %>% .[, algo := "multinom"]
   
+  sprintf("../data/sim_backpain_sample_size_ncat_multinom_alpha%d.rds", alpha2) |> 
+    saveRDS(sim_res_multinom, file=_)
+  
   # kmedians modeL
-  res[[6]] <- sim_res_kmedians = simfn(mod1, \(data, k, size) {
+  sim_res_kmedians = simfn(mod1, \(data, k, size) {
     stepKM4sim(data, k=k, nrep=10, multicore=FALSE,
                family=kccaFamily('kmedians'))
   }) %>% .[, algo := "kmedians"]
   
+  sprintf("../data/sim_backpain_sample_size_ncat_kmedians_alpha%d.rds", alpha2) |> 
+    saveRDS(sim_res_kmedians, file=_)
+  
   # kmodes model
-  res[[7]] <- sim_res_kmodes = simfn(mod1, \(data, k, size) {
+  sim_res_kmodes = simfn(mod1, \(data, k, size) {
     stepKM4sim(data, k=k, nrep=10, multicore=FALSE,
                family=kccaFamily(dist=distSimMatch,
                                  cent=centMode))
   }) %>% .[, algo := "kmodes"]
   
+  sprintf("../data/sim_backpain_sample_size_ncat_kmodes_alpha%d.rds", alpha2) |> 
+    saveRDS(sim_res_kmodes, file=_)
+  
   # PAM:Gower model
-  res[[8]] <- sim_res_PAMGower = simfn(mod1, \(data, k, size) {
+  sim_res_PAMGower = simfn(mod1, \(data, k, size) {
     stepDaisy4sim(data, k=k, ordinal = T)
   }) %>% .[, algo := "PAM:Gower"]
   
+  sprintf("../data/sim_backpain_sample_size_ncat_PAMGower_alpha%d.rds", alpha2) |> 
+    saveRDS(sim_res_PAMGower, file=_)
+  
   # PAM:GDM2 model
-  res[[9]] <- sim_res_PAMGDM2 = simfn(mod1, \(data, k, size) {
+  sim_res_PAMGDM2 = simfn(mod1, \(data, k, size) {
     stepDaisy4sim(data, k=k, diss = clusterSim::GDM2)
   }) %>% .[, algo := "PAM:GDM2"]
   
+  sprintf("../data/sim_backpain_sample_size_ncat_PAMGDM2_alpha%d.rds", alpha2) |> 
+    saveRDS(sim_res_PAMGDM2, file=_)
+  
   # kgower model
-  res[[10]] <- sim_res_kgower = simfn(mod1, \(data, k, size) {
+  sim_res_kgower = simfn(mod1, \(data, k, size) {
     stepKM4sim(data, k=k, nrep=10, multicore=FALSE,
                family=kccaFamily(dist=\(y, centers) distGower.ordinal(y,
                                                                       centers,
                                                                       range=range(data)),
                                  cent=\(y) centMin(y, distGower.ordinal,
-                                                   range=range(data))))
+                                                   xrange=range(data))))
   }) %>% .[, algo := "kgower"]
   
+  sprintf("../data/sim_backpain_sample_size_ncat_kgower_alpha%d.rds", alpha2) |> 
+    saveRDS(sim_res_kgower, file=_)
+  
   # kGower model with medians as centroids
-  res[[11]] <- sim_res_kgowerMed = simfn(mod1, \(data, k, size) {
+  sim_res_kgowerMed = simfn(mod1, \(data, k, size) {
     stepKM4sim(data, k=k, nrep=10, multicore=FALSE,
                family=kccaFamily(dist=\(y, centers) distGower.ordinal(y,
                                                                       centers,
@@ -128,17 +151,25 @@ sim_backpain <- function(inputdata,
                                  cent=centMedian))
   }) %>% .[, algo := "kgowerMed"]
   
+  sprintf("../data/sim_backpain_sample_size_ncat_kgowerMed_alpha%d.rds", alpha2) |> 
+    saveRDS(sim_res_kgowerMed, file=_)
+  
   # kGDM2 model
-  res[[12]] <- sim_res_kGDM2 = simfn(mod1, \(data, k, size) {
+  sim_res_kGDM2 = simfn(mod1, \(data, k, size) {
     stepKM4sim(data, k=k, nrep=10, multicore=FALSE,
-               family=kccaFamilyGDM2(data, xrange=range(data))) #picks centOptim as default
+               family=kccaFamilyGDM2(data, xrange=range(data)))
   }) %>% .[, algo := "kGDM2centOpt"]
   
+  sprintf("../data/sim_backpain_sample_size_ncat_kGDM2centOpt_alpha%d.rds", alpha2) |> 
+    saveRDS(sim_res_kGDM2, file=_)
+  
   # kGDM2 model with modes as centroids  
-  res[[13]] <- sim_res_kGDM2_1 = simfn(mod1, \(data, k, size) {
-    stepKM(data, k=k, nrep=10, multicore=FALSE,
+  sim_res_kGDM2_1 = simfn(mod1, \(data, k, size) {
+    stepKM4sim(data, k=k, nrep=10, multicore=FALSE,
            family=kccaFamilyGDM2(data, cent=centMode, xrange=range(data)))
   }) %>% .[, algo := "kGDM2centMode"]
   
-  bind_rows(res)    
+  sprintf("../data/sim_backpain_sample_size_ncat_kGDM2centMode_alpha%d.rds", alpha2) |> 
+    saveRDS(sim_res_kGDM2_1, file=_)
+  
 }
