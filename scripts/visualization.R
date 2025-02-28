@@ -7,8 +7,7 @@ algo_levels <- c("kmeans", "kmodes", "kmedians", "kgower", "kGDM2",
 algo_labels <- c("kmeans", "kmodes", "kmedians", "kGower", "kGDM2",
                  "PAM:Gower", "PAM:GDM2",
                  "regularized normal", "multinomial", "binomial", "beta-binomial")
-sim = here("data/sim_backpain_sample_size_ncat_*_alpha*.rds") %>%
-  Sys.glob %>%
+sim = Sys.glob("../data/sim_backpain_sample_size_ncat_*_alpha*.rds") %>%
   sapply(readRDS, simplify = F) %>%
   setNames(gsub('\\D|2', '', names(.))) %>% #for the '2' in 'GDM2'
   bind_rows(.id='alpha') |> 
