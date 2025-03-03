@@ -134,7 +134,7 @@ sim_backpain <- function(inputdata,
     stepKM4sim(data, k=k, nrep=10, multicore=FALSE,
                family=kccaFamily(dist=\(y, centers) distGower.ordinal(y,
                                                                       centers,
-                                                                      range=range(data)),
+                                                                      xrange=range(data)),
                                  cent=\(y) centMin(y, distGower.ordinal,
                                                    xrange=range(data))))
   }) %>% .[, algo := "kgower"]
