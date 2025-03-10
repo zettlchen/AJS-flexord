@@ -1,4 +1,5 @@
 library(dplyr)
+library(ggplot2)
 
 algo_levels <- c("kmeans", "kmodes", "kmedians", "kgower", "kGDM2",
                  "PAM:Gower", "PAM:GDM2",
