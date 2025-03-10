@@ -90,8 +90,8 @@ The packages required for running this simulation (and plotting its results) are
 Detailed information on the versions used can be found in `session_info.txt`.
 
 However, we do want to point out, that the simulation was written depending on `flexclust` version 1.4.2.
-While it also runs with `flexclust` 1.5.0, the new capabilities in the new version would allow for more elegant
+While it also runs with `flexclust` 1.5.0, the additional capabilities in the new version would allow for more elegant
 implementations in some of the partitioning clustering algorithms. While we have implemented these new versions in
 our package `flexord`, these changes are not implemented in this simulation. For this reason, we also provide
-to scripts on distance measures that show the 'historical' code as it was used in the simulation, marked
+two scripts on distance measures that show the 'historical' code as it was used in the simulation, marked
 by `_historicversion.R`.
