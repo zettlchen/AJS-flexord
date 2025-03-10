@@ -24,16 +24,18 @@ which we ran the algorithms.
 To simulate our `nIter` data sets, we
 
 1) took the binary data on presence/absence of 11 symptoms of low backpain  in 464 patients and 
- their respective diagnoses provided by @fop_variable_2017 as input data,
+ their respective diagnoses provided in the Supplementary Material of [Fop et al. (2017)](https://doi.org/10.1214/17-aoas1061)
+ as input data,
 2) on which we fit finite mixtures of multivariate independent Bernoulli distributions with
-three^[The value of `k=3` is taken from the original study by @fop_variable_2017.]
-components (regularized by `alpha`, in order to obtain moderately well separated clusters).
+three[^1] components (regularized by `alpha`, in order to obtain moderately well separated clusters).
 3) From these fitted models, we then generated data by drawing `N` times using binomial distributions
 for components, where the number of trials is set to `r`.
 4) Finally, we selected the `m` variables of the simulated data set with the highest 'variable importance'.
 We calculated this 'variable importance' by fitting a mixture of three multinomial regressions
 explaining the expert diagnoses (and thus *true cluster memberships*) separately by each of the 11
 original variables, and ordering them by decreasing Log-Likelihood.
+
+[^1]: The value of `k=3` is taken from the original study by Fop et al., 2017.
 
 ## Contents of this repository
 
