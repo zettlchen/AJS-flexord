@@ -2,11 +2,11 @@
 
 ## About 
 In this repository, we provide reproduction code for the simulation study published
-in *Ordinal Clustering with the flex-scheme* [@ernst_ordinal_2025]. An introduction
-to the `flexord` package can be found [here](Intro2Flexord.html).
+in *Ordinal Clustering with the flex-scheme* (Ernst et al., 2025, Manuscript submitted to the Austrian Journal of Statistics).
+An introduction to the `flexord` package can be found [here](https://dernst.github.io/flexord/articles/Intro2Flexord.html).
 
 In the study, we have compared the performance of 12 different algorithms against
-the *true clustermembership* via de Adjusted Rand Index [@hubert_arabie_1985]
+the *true clustermembership* via de Adjusted Rand Index ([Hubert and Arabie, 1985](https://doi.org/10.1007/BF01908075)).
 on simulated ordinal data sets with equal response level lengths and no missing values.
 
 We varied the following aspects of the data sets:
