@@ -72,25 +72,26 @@ error catching, parallelization customization, and reformatting to data.tables.
 
 The packages required for running this simulation (and plotting its results) are:
 
--methods
--cluster
--clusterSim
--withr
--data.table
--flexclust
--flexmix
--flexord
--ggplot2
--here
--magrittr
--nnet
--parallel
+- methods
+- cluster
+- clusterSim
+- withr
+- data.table
+- flexclust
+- flexmix
+- flexord
+- ggplot2
+- dplyr
+- here
+- magrittr
+- nnet
+- parallel
 
 Detailed information on the versions used can be found in `session_info.txt`.
 
 However, we do want to point out, that the simulation was written depending on `flexclust` version 1.4.2.
-While it also runs with `flexclust` 1.5.0, the new capabilities implemented would allow for more elegant
-options in some of the partitioning cluster algorithms. While we have implemented these new versions in
-our package `flexord`, this changes are not implemented in this simulation. For this reason, we also provide
+While it also runs with `flexclust` 1.5.0, the new capabilities in the new version would allow for more elegant
+implementations in some of the partitioning clustering algorithms. While we have implemented these new versions in
+our package `flexord`, these changes are not implemented in this simulation. For this reason, we also provide
 to scripts on distance measures that show the 'historical' code as it was used in the simulation, marked
 by `_historicversion.R`.
