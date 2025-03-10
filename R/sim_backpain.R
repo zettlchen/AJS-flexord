@@ -76,7 +76,7 @@ sim_backpain <- function(inputdata,
   
   # betabinomial model
   sim_res_betabinom = simfn(mod1, \(data, k, size) {
-    stepFLX4sim(data=data, model=FLXMCbetabinom2(size=size), k=k,
+    stepFLX4sim(data=data, model=FLXMCbetabinom(size=size), k=k,
                 nrep=10,
                 verbose=FALSE, multicore=FALSE)
   }) %>% .[, algo := "betabinom"]
