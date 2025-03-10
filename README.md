@@ -35,7 +35,7 @@ We calculated this 'variable importance' by fitting a mixture of three multinomi
 explaining the expert diagnoses (and thus *true cluster memberships*) separately by each of the 11
 original variables, and ordering them by decreasing Log-Likelihood.
 
-[^1]: The value of `k=3` is taken from the original study by Fop et al., 2017.
+[^1]: The value of `k=3` is taken from the original study by Fop et al. (2017).
 
 ## Contents of this repository
 
