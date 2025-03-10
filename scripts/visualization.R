@@ -1,5 +1,4 @@
-#copy paste from paper/simulation_v1.Rnw, needs cleanup
-#paths won't work, there is not data object
+library(dplyr)
 
 algo_levels <- c("kmeans", "kmodes", "kmedians", "kgower", "kGDM2",
                  "PAM:Gower", "PAM:GDM2",
@@ -9,7 +8,7 @@ algo_labels <- c("kmeans", "kmodes", "kmedians", "kGower", "kGDM2",
                  "regularized normal", "multinomial", "binomial", "beta-binomial")
 sim = Sys.glob("../data/sim_backpain_sample_size_ncat_*_alpha*.rds") %>%
   sapply(readRDS, simplify = F) %>%
-  setNames(gsub('\\D|2', '', names(.))) %>% #for the '2' in 'GDM2'
+  setNames(gsub('\\D|2', '', names(.))) %>% 
   bind_rows(.id='alpha') |> 
   filter(algo != 'kGDM2centOpt') |> #removing it as it is unfinished (30.10.24)
   mutate(algo=gsub('centMode', '', algo)) |> #renaming, same reason as above
