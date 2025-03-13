@@ -6,7 +6,7 @@ in *Ordinal Clustering with the flex-scheme* (Ernst et al., 2025, Manuscript sub
 An introduction to the `flexord` package can be found [here](https://dernst.github.io/flexord/articles/Intro2Flexord.html).
 
 In the study, we have compared the performance of 12 different algorithms against
-the *true clustermembership* via de Adjusted Rand Index ([Hubert and Arabie, 1985](https://doi.org/10.1007/BF01908075)).
+the *true cluster membership* via the Adjusted Rand Index ([Hubert and Arabie, 1985](https://doi.org/10.1007/BF01908075))
 on simulated ordinal data sets with equal response level lengths and no missing values.
 
 We varied the following aspects of the data sets:
@@ -16,17 +16,17 @@ We varied the following aspects of the data sets:
   $r \in \{2,\ldots,11\}$;
 * the number of variables $m \in \{3, 6, 11\}$; and
 * the regularization parameter $\alpha \in \{0, 75, 150\}$, where
-  more regularization results in more diffuse clusters.
+  higher regularization results in more diffuse clusters.
   
 For each configuration combination, we created `nIter=100` data sets, on
 which we ran the algorithms.
 
-To simulate our `nIter` data sets, we
+To simulate our `nIter` data sets
 
-1) took the binary data on presence/absence of 11 symptoms of low backpain  in 464 patients and 
+1) we took the binary data on presence/absence of 11 symptoms of low backpain in 464 patients and 
  their respective diagnoses provided in the Supplementary Material of [Fop et al. (2017)](https://doi.org/10.1214/17-aoas1061)
  as input data,
-2) on which we fit finite mixtures of multivariate independent Bernoulli distributions with
+2) we fitted finite mixtures of multivariate independent Bernoulli distributions with
 three[^1] components (regularized by `alpha`, in order to obtain moderately well separated clusters).
 3) From these fitted models, we then generated data by drawing `N` times using binomial distributions
 for components, where the number of trials is set to `r`.
@@ -46,22 +46,23 @@ original variables, and ordering them by decreasing Log-Likelihood.
 
 The main simulation functions (in `R/`) are:
 `data_sim_from_model()`
-: takes a flexmix model that has been fitted onto the input data while using the
-regulation parameter `alpha`, and generates data with desired `N` and `r`,  from
-it by drawing from a binomial distribution using the model priors and parameters.
+: takes a flexmix model that has been fitted on the input data while using the
+regulation parameter `alpha` and generates data with desired `N` and `r`
+by drawing from a binomial distribution using the model priors and parameters.
 Furthermore, it returns the model partitions as *true clusters* of the simulated
 data sets.
 
 `sim_backpain_apply2grid()`
-: applies `data_sim_from_model()` and the tested clustering algorithms to the
-parameter grid (`N`, `r`, `m`, and `alpha`). Plus some error catching for cases
-where combinations of simulated data set and clustering algorithm cannot converge.
+: applies `data_sim_from_model()` and the clustering algorithms under study to the
+parameter grid (`N`, `r`, `m`, and `alpha`). Additionally, some error catching 
+in done for cases where combinations of simulated data set and clustering algorithm 
+cannot converge.
 
 `sim_var_importance()`
 : Computes the 'variable importance' of each variable in the input data set in
 order to select the `m` variables of highest importance (=most information on
 cluster structure). This is done by fitting independent multinomial models to
-each variable explaining the *true clustering*, and then sorting variables by
+each variable explaining the *true clustering* followed by sorting variables by
 decreasing log-Likelihood.
 
 `step___4sim()`
@@ -72,24 +73,24 @@ error catching, parallelization customization, and reformatting to data.tables.
 
 The packages required for running this simulation (and plotting its results) are:
 
-- methods
-- cluster
-- clusterSim
-- withr
-- data.table
-- flexclust
-- flexmix
-- flexord
-- ggplot2
-- dplyr
-- here
-- magrittr
-- nnet
-- parallel
+- `methods`
+- `cluster`
+- `clusterSim`
+- `withr`
+- `data.table`
+- `flexclust`
+- `flexmix`
+- `flexord`
+- `ggplot2`
+- `dplyr`
+- `here`
+- `magrittr`
+- `nnet`
+- `parallel`
 
 Detailed information on the versions used can be found in `session_info.txt`.
 
-However, we do want to point out, that the simulation was written depending on `flexclust` version 1.4.2.
+However, we do want to point out, that the simulation was written with `flexclust` version 1.4.2.
 While it also runs with `flexclust` 1.5.0, the additional capabilities in the new version would allow for more elegant
 implementations in some of the partitioning clustering algorithms. While we have implemented these new versions in
 our package `flexord`, these changes are not implemented in this simulation. For this reason, we also provide
