@@ -45,6 +45,7 @@ original variables, and ordering them by decreasing Log-Likelihood.
     and system architecture on which the simulation was run.
 
 The main simulation functions (in `R/`) are:
+
 `data_sim_from_model()`
 : takes a flexmix model that has been fitted on the input data while using the
 regulation parameter `alpha` and generates data with desired `N` and `r`
