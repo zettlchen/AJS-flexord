@@ -56,7 +56,7 @@ data sets.
 `sim_backpain_apply2grid()`
 : applies `data_sim_from_model()` and the clustering algorithms under study to the
 parameter grid (`N`, `r`, `m`, and `alpha`). Additionally, some error catching 
-in done for cases where combinations of simulated data set and clustering algorithm 
+is done for cases where combinations of simulated data set and clustering algorithm 
 cannot converge.
 
 `sim_var_importance()`
