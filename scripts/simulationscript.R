@@ -1,13 +1,3 @@
-#Simulation script, last checked: 28.02.25
-
-#open points:
-
-#fix: back to print to file option (adding mkdir step to simulation script) [X]
-#general TODO: add scripts with old distGDM2 and distGower [X]
-#general TODO: add script for FLXMCbinomial2 [~]
-#general TODO: add script for FLXMCbetabinom2 [~]
-#are the other FLXs the same as in flexord? [ ]
-
 library(flexclust)
 library(flexmix)
 list.files('../R', full.names = TRUE) |> 
