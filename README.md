@@ -66,7 +66,7 @@ cluster structure). This is done by fitting independent multinomial models to
 each variable explaining the *true clustering* followed by sorting variables by
 decreasing log-Likelihood.
 
-`step___4sim()`
+`stepXY4sim()`
 : replicate `flexclust::stepFlexclust`/`flexmix::stepFlexmix` with additional
 error catching, parallelization customization, and reformatting to data.tables.
 
