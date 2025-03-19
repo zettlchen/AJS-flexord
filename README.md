@@ -30,8 +30,8 @@ To simulate our `nIter` data sets
 three[^1] components (regularized by `alpha`, in order to obtain moderately well separated clusters).
 3) From these fitted models, we then generated data by drawing `N` times using binomial distributions
 for components, where the number of trials is set to `r`.
-4) Finally, we selected the `m` variables of the simulated data set with the highest 'variable importance'.
-We calculated this 'variable importance' by fitting a mixture of three multinomial regressions
+4) Finally, we selected the `m` variables of the simulated data set with the highest *variable importance*.
+We calculated this *variable importance* by fitting a mixture of three multinomial regressions
 explaining the expert diagnoses (and thus *true cluster memberships*) separately by each of the 11
 original variables, and ordering them by decreasing Log-Likelihood.
 
@@ -60,7 +60,7 @@ is done for cases where combinations of simulated data set and clustering algori
 cannot converge.
 
 `sim_var_importance()`
-: Computes the 'variable importance' of each variable in the input data set in
+: Computes the *variable importance* of each variable in the input data set in
 order to select the `m` variables of highest importance (=most information on
 cluster structure). This is done by fitting independent multinomial models to
 each variable explaining the *true clustering* followed by sorting variables by
@@ -95,5 +95,5 @@ However, we do want to point out, that the simulation was written with **flexclu
 While it also runs with **flexclust** 1.5.0, the additional capabilities in the new version would allow for more elegant
 implementations in some of the partitioning clustering algorithms. While we have implemented these new versions in
 our package **flexord**, these changes are not implemented in this simulation. For this reason, we also provide
-two scripts on distance measures that show the 'historical' code as it was used in the simulation, marked
+two scripts on distance measures that show the *historical* code as it was used in the simulation, marked
 by `_historicversion.R`.
