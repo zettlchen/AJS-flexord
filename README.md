@@ -3,7 +3,7 @@
 ## About 
 In this repository, we provide reproduction code for the simulation study published
 in *Ordinal Clustering with the flex-scheme* (Ernst et al., 2025, Manuscript submitted to the Austrian Journal of Statistics).
-An introduction to the `flexord` package can be found [here](https://dernst.github.io/flexord/articles/Intro2Flexord.html).
+An introduction to the **flexord** package can be found [here](https://dernst.github.io/flexord/articles/Intro2Flexord.html).
 
 In the study, we have compared the performance of 12 different algorithms against
 the *true cluster membership* via the Adjusted Rand Index ([Hubert and Arabie, 1985](https://doi.org/10.1007/BF01908075))
@@ -74,26 +74,26 @@ error catching, parallelization customization, and reformatting to data.tables.
 
 The packages required for running this simulation (and plotting its results) are:
 
-- `methods`
-- `cluster`
-- `clusterSim`
-- `withr`
-- `data.table`
-- `flexclust`
-- `flexmix`
-- `flexord`
-- `ggplot2`
-- `dplyr`
-- `here`
-- `magrittr`
-- `nnet`
-- `parallel`
+- **methods**
+- **cluster**
+- **clusterSim**
+- **withr**
+- **data.table**
+- **flexclust**
+- **flexmix**
+- **flexord**
+- **ggplot2**
+- **dplyr**
+- **here**
+- **magrittr**
+- **nnet**
+- **parallel**
 
 Detailed information on the versions used can be found in `session_info.txt`.
 
-However, we do want to point out, that the simulation was written with `flexclust` version 1.4.2.
-While it also runs with `flexclust` 1.5.0, the additional capabilities in the new version would allow for more elegant
+However, we do want to point out, that the simulation was written with **flexclust** version 1.4.2.
+While it also runs with **flexclust** 1.5.0, the additional capabilities in the new version would allow for more elegant
 implementations in some of the partitioning clustering algorithms. While we have implemented these new versions in
-our package `flexord`, these changes are not implemented in this simulation. For this reason, we also provide
+our package **flexord**, these changes are not implemented in this simulation. For this reason, we also provide
 two scripts on distance measures that show the 'historical' code as it was used in the simulation, marked
 by `_historicversion.R`.
